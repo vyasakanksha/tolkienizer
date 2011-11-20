@@ -1,6 +1,6 @@
 \documentclass[12pt]{article}
 \title{tolkenizer \\ \small{CS 551 Project Proposal}}
-\author{Akanksha Vyas \& Samuel Payson}
+\author{Akanksha Vyas \and Samuel Payson}
 
 \begin{document}
 \maketitle
@@ -8,18 +8,19 @@
 This proposal describes our idea for the CS 551 final project. The goal of the
 project is to create an AI system that, given words from a particular language,
 will produce similar words based on the probabilities of different letters
-following one another.
+following one another. For example, given a list of science-fiction names, it
+could produce more words that ``sound like'' science-fiction names.
 
-First we will declare \textit{token} type that could be mono-, bi-, or tri-graphs.
-From a test data set the program will learn the probabilities of tokens following 
-each other, and use this data to create a hidden Markov model.
-Eventually, given tokens as inputs the program should be able to create words 
-resembling the learning data set. We will implement this project in the Go 
-Programming Language.
+First we will declare a \textit{token} type that could be a single character,
+digraph, or trigraph. From a test data set, the program will learn the
+probabilities of tokens following each other, and use this data to create a
+Markov model. Eventually, given a single token as input, the program should be
+able to create words resembling the learning data set. We will implement this
+project in the Go programming language.
 
 Current implementations of similar projects use trivial methods like scrambling
 data and then using random number generators. We are hoping that this method 
-could have applications to natural language.
+could have applications to natural language processing.
 
 The project is hosted on https://github.com/vyasa/tolkienizer
 \end{document}
