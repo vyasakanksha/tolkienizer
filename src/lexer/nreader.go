@@ -19,7 +19,7 @@ type NReaderBase {
    r Reader
 }
 
-func ( NReaderBase ) Prefix() []token.Token {
+func ( NReaderBase ) Prefix() []Token {
    j := 0
    length := len( tokenSet )
    prefixSet := make( []Token, length - n )
@@ -29,6 +29,6 @@ func ( NReaderBase ) Prefix() []token.Token {
    }
 }
 
-type NReaderSpace struct {
-   NReaderBase
-}
+//type NReaderSpace struct {
+   //NReaderBase
+//}
