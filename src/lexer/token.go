@@ -1,35 +1,38 @@
 package lexer
 
-/* import "fmt" */
-
-// An interface for Token that can be of any type as long it implements 
-// Cmp (compare). 
+// A token type. Represents one "unit of input", could be anything that is part
+// of a language, right now we support strings ( i.e. words ) and UTF-8 runes.
 type Token interface {
-   Cmp( t Token ) bool
+
+   // Compare two tokens for equality. This function necessarily uses runtime
+   // reflection to make sure the tokens are the same type.
+   // return: 'true' if tokens are equal, 'false' otherwise.
+   IsEqual( t Token ) bool
 }
 
-// Two current implementations of Token are for ints and string. They are declared
-// here.
-type intToken int
+// The two current implementations of Token are for runes and string. They are
+// declared here.
+type runeToken int
 type stringToken string
 
-// Functions for intToken 
+// Functions for runeToken 
 
-// Default constructor - takes an integer as input, converts it into a intToken
-//and returns a pointer to the intToken
-func NewIntToken( n int ) * intToken {
-   i := intToken( n )
+// Creates new rune-based token type
+// return: Token with underlying type '*runeToken'
+func NewRuneToken( n int ) Token {
+   i := runeToken( n )
    return &i
 }
 
-// This function takes a token as input and compares it to an intToken,
-// returning true if they are equal. It first checks if the input token is 
-// indeed an intToken using type reflection.
-// The func returns false on incompatible types and inequality
-func ( this * intToken ) Cmp( t Token ) bool {
-   if i, ok := t.(*intToken); ok {
+// Implement 'IsEqual()' to make runeToken a 'lexer.Token'
+func ( this * runeToken ) IsEqual( t Token ) bool {
+
+   // Check if the token we were given is a '*runeToken'
+   if i, ok := t.(*runeToken); ok {
+      // If so, compare it with 'this'
       return *this == *i
    } else {
+      // Otherwise, they can't possibly be equal, return 'false'
       return false
    }
 
@@ -38,32 +41,24 @@ func ( this * intToken ) Cmp( t Token ) bool {
 
 // Functions for stringToken 
 
-// Default constructor - takes an String as input, converts it into a
-// stringToken and returns a pointer to the stringToken.
+// Creates new string-based token type
+// return: Token with underlying type '*stringToken'
 func NewStringToken( s string ) * stringToken {
    i := stringToken( s )
    return &i
 }
 
-// This function takes a token as input and compares it to a stringToken,
-// returning true if they are equal. It first checks if the input token is 
-// indeed an stringToken using type reflection.
-// The func returns false on incompatible types and inequality
-func ( this * stringToken ) Cmp( t Token ) bool {
+// Implement 'IsEqual()' to make stringToken a 'lexer.Token'
+func ( this * stringToken ) IsEqual( t Token ) bool {
+
+   // Check if the token we were given is a '*stringToken'
    if i, ok := t.(*stringToken); ok {
+      // If so, compare it with 'this'
       return *this == *i
    } else {
+      // Otherwise, they can't possibly be equal, return 'false'
       return false
    }
 
    panic( "Should never get here!" )
 }
-
-/*func main() {
-   i := NewStringToken( "thanks for all" )
-   j := NewStringToken( "thanks for all" )
-   k := NewStringToken( "fish" )
-
-   fmt.Println( i.Cmp( j ) )
-   fmt.Println( i.Cmp( k ) )
-}*/
