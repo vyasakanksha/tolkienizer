@@ -21,7 +21,7 @@ type NReaderBase struct {
    next Token
    tokenSet []Token
    r bufio.Reader
-   Token this.negOne
+   negOne Token
 }
 
 
@@ -34,7 +34,7 @@ func ( this NReaderBase ) Prefix() []Token {
 
    if length < this.n {
       for j := 0; j < (this.n - length); j++ {
-         prefixSet[j] = this.negOne;
+         prefixSet[j] = this.negOne
       }
    }
 
@@ -47,13 +47,15 @@ func ( this NReaderBase ) Prefix() []Token {
 
 //This function reads a new value, converts it into a token and adds it to
 //tokenSet
+/*
 func ( this NReaderBase ) Advance() {
   temp, _, err := this.r.ReadRune()
 }
+*/
 
 // This function returns the last token from tokenSet
-func ( this NReaderBase ) Next() {
-   return this.tokenSet[ len( tokenSet ) - 1 ]
+func ( this NReaderBase ) Next() Token {
+   return this.tokenSet[ len( this.tokenSet ) - 1 ]
 }
 
 //type NReaderSpace struct {
