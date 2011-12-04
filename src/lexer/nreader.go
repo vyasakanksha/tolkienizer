@@ -7,10 +7,10 @@ import (
 type NReader interface {
 
    // This function returns the last n tokens in the tokenSet
-   Prefix() []Token
+   Prefix() []string
 
    // This function returns the most recent token in the tokenSet
-   Next() Token
+   Next() string
 
    // This function reads a new token and adds it to tokenSet
    Advance()
@@ -18,46 +18,42 @@ type NReader interface {
 
 type NReaderBase struct {
    n int
-   next Token
-   tokenSet []Token
+   next string
+   stringSet []string
    r bufio.Reader
-   negOne Token
 }
 
 
 // This function looks at the righmost value in the tokenset and returns a slice
 // containing the last n tokens
-func ( this NReaderBase ) Prefix() []Token {
+func ( this NReaderBase ) Prefix() []string {
    j := 0
-   length := len( this.tokenSet )
-   prefixSet := make( []Token, this.n )
+   length := len( this.stringSet )
+   prefixSet := make( []string, this.n )
 
    if length < this.n {
       for j := 0; j < (this.n - length); j++ {
-         prefixSet[j] = this.negOne
+         prefixSet[j] = "-1"
       }
    }
 
    for i := ( length - this.n ); i < length; i++ {
-      prefixSet[j] = this.tokenSet[i]
+      prefixSet[j] = this.stringSet[i]
       j++
    }
    return prefixSet
 }
 
-//This function reads a new value, converts it into a token and adds it to
-//tokenSet
+//This function reads a new value, converts it into a string and adds it to
+//stringSet
 /*
 func ( this NReaderBase ) Advance() {
   temp, _, err := this.r.ReadRune()
 }
 */
 
-// This function returns the last token from tokenSet
-func ( this NReaderBase ) Next() Token {
-   return this.tokenSet[ len( this.tokenSet ) - 1 ]
+// This function returns the last string from stringSet
+func ( this NReaderBase ) Next() string {
+   return this.stringSet[ len( this.stringSet ) - 1 ]
 }
 
-//type NReaderSpace struct {
-   //NReaderBase
-//}
