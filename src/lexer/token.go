@@ -8,7 +8,7 @@ type Token interface {
    Cmp( t Token ) bool
 }
 
-// Two current implementions of Token are for ints and string. They are declared
+// Two current implementations of Token are for ints and string. They are declared
 // here.
 type intToken int
 type stringToken string
@@ -25,7 +25,7 @@ func NewIntToken( n int ) * intToken {
 // This function takes a token as input and compares it to an intToken,
 // returning true if they are equal. It first checks if the input token is 
 // indeed an intToken using type reflection.
-// The func returns false on incompatable types and inequality
+// The func returns false on incompatible types and inequality
 func ( this * intToken ) Cmp( t Token ) bool {
    if i, ok := t.(*intToken); ok {
       return *this == *i
@@ -48,7 +48,7 @@ func NewStringToken( s string ) * stringToken {
 // This function takes a token as input and compares it to a stringToken,
 // returning true if they are equal. It first checks if the input token is 
 // indeed an stringToken using type reflection.
-// The func returns false on incompatable types and inequality
+// The func returns false on incompatible types and inequality
 func ( this * stringToken ) Cmp( t Token ) bool {
    if i, ok := t.(*stringToken); ok {
       return *this == *i
