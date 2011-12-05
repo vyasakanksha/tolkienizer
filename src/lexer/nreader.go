@@ -23,7 +23,6 @@ type NReaderBase struct {
    r bufio.Reader
 }
 
-
 // This function looks at the righmost value in the tokenset and returns a slice
 // containing the last n tokens
 func ( this NReaderBase ) Prefix() []string {
