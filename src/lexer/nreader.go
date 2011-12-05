@@ -17,20 +17,19 @@ type NReader interface {
 }
 
 type NReaderBase struct {
-   n int
-   next Token
+   n        int
+   next     Token
    tokenSet []Token
-   r bufio.Reader
-   negOne Token
+   r        bufio.Reader
+   negOne   Token
 }
-
 
 // This function looks at the righmost value in the tokenset and returns a slice
 // containing the last n tokens
-func ( this NReaderBase ) Prefix() []Token {
+func (this NReaderBase) Prefix() []Token {
    j := 0
-   length := len( this.tokenSet )
-   prefixSet := make( []Token, this.n )
+   length := len(this.tokenSet)
+   prefixSet := make([]Token, this.n)
 
    if length < this.n {
       for j := 0; j < (this.n - length); j++ {
@@ -38,7 +37,7 @@ func ( this NReaderBase ) Prefix() []Token {
       }
    }
 
-   for i := ( length - this.n ); i < length; i++ {
+   for i := (length - this.n); i < length; i++ {
       prefixSet[j] = this.tokenSet[i]
       j++
    }
@@ -54,10 +53,10 @@ func ( this NReaderBase ) Advance() {
 */
 
 // This function returns the last token from tokenSet
-func ( this NReaderBase ) Next() Token {
-   return this.tokenSet[ len( this.tokenSet ) - 1 ]
+func (this NReaderBase) Next() Token {
+   return this.tokenSet[len(this.tokenSet)-1]
 }
 
 //type NReaderSpace struct {
-   //NReaderBase
+//NReaderBase
 //}

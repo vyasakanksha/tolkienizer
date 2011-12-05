@@ -7,7 +7,7 @@ type Token interface {
    // Compare two tokens for equality. This function necessarily uses runtime
    // reflection to make sure the tokens are the same type.
    // return: 'true' if tokens are equal, 'false' otherwise.
-   IsEqual( t Token ) bool
+   IsEqual(t Token) bool
 }
 
 // The two current implementations of Token are for runes and string. They are
@@ -19,13 +19,13 @@ type stringToken string
 
 // Creates new rune-based token type
 // return: Token with underlying type '*runeToken'
-func NewRuneToken( n int ) Token {
-   i := runeToken( n )
+func NewRuneToken(n int) Token {
+   i := runeToken(n)
    return &i
 }
 
 // Implement 'IsEqual()' to make runeToken a 'lexer.Token'
-func ( this * runeToken ) IsEqual( t Token ) bool {
+func (this *runeToken) IsEqual(t Token) bool {
 
    // Check if the token we were given is a '*runeToken'
    if i, ok := t.(*runeToken); ok {
@@ -36,20 +36,20 @@ func ( this * runeToken ) IsEqual( t Token ) bool {
       return false
    }
 
-   panic( "Should never get here!" )
+   panic("Should never get here!")
 }
 
 // Functions for stringToken 
 
 // Creates new string-based token type
 // return: Token with underlying type '*stringToken'
-func NewStringToken( s string ) * stringToken {
-   i := stringToken( s )
+func NewStringToken(s string) *stringToken {
+   i := stringToken(s)
    return &i
 }
 
 // Implement 'IsEqual()' to make stringToken a 'lexer.Token'
-func ( this * stringToken ) IsEqual( t Token ) bool {
+func (this *stringToken) IsEqual(t Token) bool {
 
    // Check if the token we were given is a '*stringToken'
    if i, ok := t.(*stringToken); ok {
@@ -60,5 +60,5 @@ func ( this * stringToken ) IsEqual( t Token ) bool {
       return false
    }
 
-   panic( "Should never get here!" )
+   panic("Should never get here!")
 }
