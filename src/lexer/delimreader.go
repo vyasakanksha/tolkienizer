@@ -5,7 +5,6 @@ import (
    "io"
    "bufio"
    "utf8"
-   "fmt"
 )
 
 type DelimReader struct {
@@ -25,27 +24,22 @@ func (r *DelimReader) Read(p []byte) (n int, err os.Error) {
    if r.remainder != nil {
       for i := 0; i < len(r.remainder); i++ {
          p[i] = r.remainder[i]
-         fmt.Println("%d\n", int(p[i]))
          bytes_written++
       }
       r.remainder = nil
    }
 
    for bytes_written < len(p) {
-      fmt.Printf("Bites written: %d\n", bytes_written)
       rune, size, err := r.reader.ReadRune()
       if err != nil {
          return bytes_written, err
       }
-      fmt.Printf("Rune read: %s\n", string(rune))
       for _, value := range r.delimiters {
          if value == rune {
-            fmt.Printf("It's a delimiter\n")
             rune = r.used_delimiter
             size = utf8.RuneLen(rune)
          }
       }
-      fmt.Printf("Rune size: %d\n", size)
       if bytes_written+size > len(p) {
          // we need to split the rune and hold on to the remainder
          writable := len(p) - bytes_written
