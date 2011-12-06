@@ -41,6 +41,9 @@ type nReaderLetter struct {
 // it stops reading.
 type nReaderLetterDelim struct {
    nReaderBase
+
+   // A list of characters that should as delimiters between words
+   delim []int
 }
 
 // Type that treats each word as a token
@@ -48,41 +51,9 @@ type nReaderWords struct {
    nReaderBase
 }
 
-func (this nReaderLetterDelim) Advance() bool {
-   temp, _, err := this.r.ReadRune()
-   if err != nil || temp == '.' {
-      return false
-   } else {
-      this.stringSet[ len(this.stringSet) ] = string(temp)
-      return true
-   }
-
-   panic( "We should never get here")
-}
-
-
-func (this nReaderLetter) Advance() bool {
-   temp, _, err := this.r.ReadRune()
-   if err != nil {
-      return false
-   } else {
-      this.stringSet[len(this.stringSet)] = string(temp)
-      return true
-   }
-
-   panic( "We should never get here")
-}
-
-func (this nReaderWords) Advance() bool {
-   temp, err := this.r.ReadString('.')
-   if err != nil {
-      return false
-   } else {
-      this.stringSet[len(this.stringSet)] = temp
-      return true
-   }
-
-   panic( "We should never get here")
+func (this nReaderBase) newNReader ( n int, r Reader ) {
+   this.n = n
+   this.r = bufio.NewReader( r )
 }
 
 // Return: Last n values of the stringSet (excuding the current value)
@@ -110,5 +81,55 @@ func (this nReaderBase) Prefix() []string {
 // This function returns the current string from stringSet
 func (this nReaderBase) Next() string {
    return this.stringSet[len(this.stringSet)-1]
+}
+
+// Implementation of the advance function that reads letters till it encounters
+// a specified delimited. The function reads the next character from the stream
+// and adds it to stringSet.
+func (this nReaderLetterDelim) Advance() bool {
+   temp, _, err := this.r.ReadRune()
+
+   // Since the filter converted all delims to ".", we only have to account for
+   // it.
+   if err != nil || temp == '.' {
+      return false
+   } else {
+      this.stringSet[ len(this.stringSet) ] = string(temp)
+      return true
+   }
+
+   panic( "We should never get here")
+}
+
+// Implementation of the advance function that keeps reading letters till 
+// it encounters the end of the stream. The function reads the next 
+// character from the stream and adds it to stringSet.
+func (this nReaderLetter) Advance() bool {
+   temp, _, err := this.r.ReadRune()
+   if err != nil {
+      return false
+   } else {
+      this.stringSet[len(this.stringSet)] = string(temp)
+      return true
+   }
+
+   panic( "We should never get here")
+}
+
+// Implementation of the advance function that reads stings (words) till 
+// it encounters a specified delimiter. The function reads the next 
+// string from the stream and adds it to stringSet.
+func (this nReaderWords) Advance() bool {
+   // Since the filter converted all delims to ".", we only have to account for
+   // it.
+   temp, err := this.r.ReadString('.')
+   if err != nil {
+      return false
+   } else {
+      this.stringSet[len(this.stringSet)] = temp
+      return true
+   }
+
+   panic( "We should never get here")
 }
 
