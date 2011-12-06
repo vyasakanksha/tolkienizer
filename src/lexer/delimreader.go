@@ -3,29 +3,27 @@ package lexer
 import (
     "os"
     "io"
+    "bufio"
     "utf8"
     "fmt"
 )
 
 type DelimReader struct {
-    rr *(bufio.Reader)
+    reader *(bufio.Reader)
     delimiters []int
     used_delimiter int
     remainder []byte
 }
 
 func NewDelimReader(read io.Reader, delim []int, used int) io.Reader {
-    if err != nil {
-        return nil
-    }
-    return &DelimReader{read, delim, used, nil}
+    return &DelimReader{bufio.NewReader(read), delim, used, nil}
 }
 
 func (r *DelimReader) Read(p []byte) (n int, err os.Error) {
     bytes_written := 0
     for (bytes_written < len(p)) {
         fmt.Printf("Bites written: %d\n", bytes_written)
-        rune, size, err := r.rr.ReadRune()
+        rune, size, err := r.reader.ReadRune()
         if (err != nil) {
             return bytes_written, err
         }
