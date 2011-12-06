@@ -2,61 +2,157 @@ package lexer
 
 import (
    "bufio"
+   "io"
 )
 
 type NReader interface {
 
-   // This function returns the last n tokens in the tokenSet
-   Prefix() []Token
+   // This function returns the last n strings in the tokenSet
+   Prefix() []string
 
-   // This function returns the most recent token in the tokenSet
-   Next() Token
+   // This function returns the most recent string in the tokenSet
+   Next() string
 
-   // This function reads a new token and adds it to tokenSet
-   Advance()
+   // This function reads a new string and adds it to tokenSet
+   Advance() bool
 }
 
-type NReaderBase struct {
-   n        int
-   next     Token
-   tokenSet []Token
-   r        bufio.Reader
-   negOne   Token
+// A base struct off which each reader extends
+type nReaderBase struct {
+   // The number of strings each prefix contains
+   n  int
+
+   // The leftmost string in the token set
+   next string
+
+   // A slice of strings in the order they appear in the learning data
+   stringSet []string
+
+   // Specifies the format in which the learning data is stored
+   r  *bufio.Reader
 }
 
-// This function looks at the righmost value in the tokenset and returns a slice
-// containing the last n tokens
-func (this NReaderBase) Prefix() []Token {
+// Type that treats every letter (including punctuation and space) as a token
+type nReaderLetter struct {
+   nReaderBase
+}
+
+// Type that treats every letter as a token, and treats every word as
+// a different problem. I.e. everytime it encounters a space or punctuation, 
+// it stops reading.
+type nReaderLetterDelim struct {
+   nReaderBase
+
+   // A list of characters that should as delimiters between words
+   delim []int
+}
+
+// Type that treats each word as a token
+type nReaderWords struct {
+   nReaderBase
+
+   // A list of characters that should as delimiters between words
+   delim []int
+}
+
+// Initializes NReaderLetter with n and reader r 
+func NewNReaderLetter(n int, r io.Reader) NReader {
+   return &nReaderLetter{nReaderBase: nReaderBase{r: bufio.NewReader(r), n: n}}
+}
+
+// Initializes NReaderLetterDelim with n, reader r and a slice of delims that
+// indicate the end of a word.
+func NewNReaderLetterDelim(n int, r io.Reader, delim []int) NReader {
+   return &nReaderLetterDelim{
+      nReaderBase: nReaderBase{
+         r: bufio.NewReader(NewDelimReader(r, delim, '.')),
+         n: n},
+      delim: delim}
+}
+
+// Initializes NReaderWords with n, reader r and a slice of delims that
+// indicate the end of a word.
+func NewNReaderWords(n int, r io.Reader, delim []int) NReader {
+   return &nReaderWords{
+      nReaderBase: nReaderBase{
+         r: bufio.NewReader(NewDelimReader(r, delim, '.')),
+         n: n},
+      delim: delim}
+}
+
+// Return: Last n values of the stringSet (excuding the current value)
+func (this nReaderBase) Prefix() []string {
    j := 0
-   length := len(this.tokenSet)
-   prefixSet := make([]Token, this.n)
+   length := len(this.stringSet)
+   prefixSet := make([]string, this.n)
 
+   // If n is larger than the stringSet, initialize prefixSet[:n-length] to
+   // the empty string
    if length < this.n {
       for j := 0; j < (this.n - length); j++ {
-         prefixSet[j] = this.negOne
+         prefixSet[j] = ""
       }
    }
 
+   // Copy the last n (excluding length) tokens to prefix
    for i := (length - this.n); i < length; i++ {
-      prefixSet[j] = this.tokenSet[i]
+      prefixSet[j] = this.stringSet[i]
       j++
    }
    return prefixSet
 }
 
-//This function reads a new value, converts it into a token and adds it to
-//tokenSet
-/*
-func ( this NReaderBase ) Advance() {
-  temp, _, err := this.r.ReadRune()
-}
-*/
-
-// This function returns the last token from tokenSet
-func (this NReaderBase) Next() Token {
-   return this.tokenSet[len(this.tokenSet)-1]
+// This function returns the current string from stringSet
+func (this nReaderBase) Next() string {
+   return this.stringSet[len(this.stringSet)-1]
 }
 
-//type NReaderSpace struct {
-//NReaderBase
-//}
+// Implementation of the advance function that reads letters till it encounters
+// a specified delimited. The function reads the next character from the stream
+// and adds it to stringSet.
+func (this nReaderLetterDelim) Advance() bool {
+   temp, _, err := this.r.ReadRune()
+
+   // Since the filter converted all delims to ".", we only have to account for
+   // it.
+   if err != nil || temp == '.' {
+      return false
+   } else {
+      this.stringSet[len(this.stringSet)] = string(temp)
+      return true
+   }
+
+   panic("We should never get here")
+}
+
+// Implementation of the advance function that keeps reading letters till 
+// it encounters the end of the stream. The function reads the next 
+// character from the stream and adds it to stringSet.
+func (this nReaderLetter) Advance() bool {
+   temp, _, err := this.r.ReadRune()
+   if err != nil {
+      return false
+   } else {
+      this.stringSet[len(this.stringSet)] = string(temp)
+      return true
+   }
+
+   panic("We should never get here")
+}
+
+// Implementation of the advance function that reads stings (words) till 
+// it encounters a specified delimiter. The function reads the next 
+// string from the stream and adds it to stringSet.
+func (this nReaderWords) Advance() bool {
+   // Since the filter converted all delims to ".", we only have to account for
+   // it.
+   temp, err := this.r.ReadString('.')
+   if err != nil {
+      return false
+   } else {
+      this.stringSet[len(this.stringSet)] = temp
+      return true
+   }
+
+   panic("We should never get here")
+}
