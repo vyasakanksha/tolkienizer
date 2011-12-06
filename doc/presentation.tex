@@ -93,8 +93,70 @@
 
 \section{Development Process}
 
+\subsection{Program Design}
 \begin{frame}
-   \frametitle{Sam}
+   \frametitle{Overall Design}
+   \begin{itemize}
+      \item Two step process
+      \begin{enumerate}
+         \item Learn from a large set of words from some language
+         \item Produce words that ``seem'' like they are in the language
+      \end{enumerate}
+      \item In the first phase we construct our Markov Model
+      \item In the second we simply let it run.
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{Interpreting the Input}
+   \begin{itemize}
+      \item Lexical Analyzer
+      \begin{itemize}
+         \item responsible for breaking the input into \emph{tokens}
+         \item very flexible, can break up at word or letter boundaries
+      \end{itemize}
+      \item All tokens are eventually turned into strings
+      \item Rest of program designed to deal with strings
+      \begin{itemize}
+         \item Completely agnostic about the type of the tokens
+         \item Any type can be converted to a string
+      \end{itemize}
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{Representing Markov Models}
+   \begin{itemize}
+      \item Each state is defined by a sequence of three tokens
+      \item The state has a set of tokens, each with a probability of being the
+      next token
+      \item During the learning phase, watch the input and update probabilites
+      according to training data
+      \item During the generation phase, follow the Markov Model, emitting
+      symbols based on the probabilities at each state
+   \end{itemize}
+\end{frame}
+
+\subsection{Implementation}
+
+\begin{frame}
+   \frametitle{Programming in Go}
+   \begin{itemize}
+      \item Go offers lightweight threads | hundreds of thousands of concurrent
+      processes with minimal overhead.
+      \item Efficient communication between lightweight threads, allowing
+      programs to be build like UNIX tools (pipe and filter).
+      \item Nodes of markov model implemented as individual threads
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+   \frametitle{Advantages of this Design}
+   \begin{itemize}
+      \item A single function is easy to implement and maintain.
+      \item Nodes know only about themselves, no need for ``glue'' to hold
+      software components together.
+   \end{itemize}
 \end{frame}
 
 \end{document}
