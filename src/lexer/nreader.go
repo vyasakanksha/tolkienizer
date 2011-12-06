@@ -2,6 +2,7 @@ package lexer
 
 import (
    "bufio"
+   "io"
 )
 
 type NReader interface {
@@ -28,7 +29,7 @@ type nReaderBase struct {
    stringSet []string
 
    // Specifies the format in which the learning data is stored
-   r  bufio.Reader
+   r  *bufio.Reader
 }
 
 // Type that treats every letter (including punctuation and space) as a token
@@ -49,11 +50,34 @@ type nReaderLetterDelim struct {
 // Type that treats each word as a token
 type nReaderWords struct {
    nReaderBase
+
+   // A list of characters that should as delimiters between words
+   delim []int
 }
 
-func (this nReaderBase) newNReader ( n int, r Reader ) {
-   this.n = n
-   this.r = bufio.NewReader( r )
+// Initializes NReaderLetter with n and reader r 
+func NewNReaderLetter(n int, r io.Reader) NReader {
+   return &nReaderLetter{nReaderBase: nReaderBase{r: bufio.NewReader(r), n: n}}
+}
+
+// Initializes NReaderLetterDelim with n, reader r and a slice of delims that
+// indicate the end of a word.
+func NewNReaderLetterDelim(n int, r io.Reader, delim []int) NReader {
+   return &nReaderLetterDelim{
+      nReaderBase: nReaderBase{
+         r: bufio.NewReader(NewDelimReader(r, delim, '.')),
+         n: n},
+      delim: delim}
+}
+
+// Initializes NReaderWords with n, reader r and a slice of delims that
+// indicate the end of a word.
+func NewNReaderWords(n int, r io.Reader, delim []int) NReader {
+   return &nReaderWords{
+      nReaderBase: nReaderBase{
+         r: bufio.NewReader(NewDelimReader(r, delim, '.')),
+         n: n},
+      delim: delim}
 }
 
 // Return: Last n values of the stringSet (excuding the current value)
@@ -94,11 +118,11 @@ func (this nReaderLetterDelim) Advance() bool {
    if err != nil || temp == '.' {
       return false
    } else {
-      this.stringSet[ len(this.stringSet) ] = string(temp)
+      this.stringSet[len(this.stringSet)] = string(temp)
       return true
    }
 
-   panic( "We should never get here")
+   panic("We should never get here")
 }
 
 // Implementation of the advance function that keeps reading letters till 
@@ -113,7 +137,7 @@ func (this nReaderLetter) Advance() bool {
       return true
    }
 
-   panic( "We should never get here")
+   panic("We should never get here")
 }
 
 // Implementation of the advance function that reads stings (words) till 
@@ -130,6 +154,5 @@ func (this nReaderWords) Advance() bool {
       return true
    }
 
-   panic( "We should never get here")
+   panic("We should never get here")
 }
-
