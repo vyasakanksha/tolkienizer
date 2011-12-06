@@ -3,7 +3,6 @@ package lexer
 import (
     "os"
     "io"
-    "bufio"
     "utf8"
     "fmt"
 )
@@ -15,12 +14,11 @@ type DelimReader struct {
     remainder []byte
 }
 
-func NewDelimReader(filename string, delim []int, used int) io.Reader {
-    f, err := os.Open(filename)
+func NewDelimReader(read io.Reader, delim []int, used int) io.Reader {
     if err != nil {
         return nil
     }
-    return &DelimReader{bufio.NewReader(f), delim, used, nil}
+    return &DelimReader{read, delim, used, nil}
 }
 
 func (r *DelimReader) Read(p []byte) (n int, err os.Error) {
