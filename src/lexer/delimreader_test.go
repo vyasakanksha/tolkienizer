@@ -1,11 +1,12 @@
 package lexer
 
 import (
-    "testing"
-    "os"
+   "testing"
+   "os"
 )
 
 func TestThatThang(t *testing.T) {
+<<<<<<< HEAD
     delim := make([]int, 4)
     delim[0] = ' '
     delim[1] = ','
