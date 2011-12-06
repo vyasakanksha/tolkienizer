@@ -3,6 +3,7 @@ package lexer
 import (
     "testing"
     "fmt"
+    "os"
 )
 
 func TestThatThang(t *testing.T) {
@@ -12,7 +13,9 @@ func TestThatThang(t *testing.T) {
     delim[2] = '.'
     delim[3] = '-'
     used := '.'
-    dr := NewDelimReader("shittysamplefile", delim, used)
+    f, _ := os.Open("samplefile")
+    defer f.Close()
+    dr := NewDelimReader(f, delim, used)
 
     atestslice := make([]byte, 4)
     num, err := dr.Read(atestslice)
