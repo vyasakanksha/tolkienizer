@@ -6,6 +6,11 @@ import (
    "sync"
 )
 
+var (
+   entryExists      os.Error = os.NewError("Entry already exists.")
+   entryDoesntExist os.Error = os.NewError("Entry does not exist.")
+)
+
 type transitionTable struct {
    table      map[string]*transitionTable
    transition chan string
@@ -39,7 +44,7 @@ func (me *transitionTable) lookUp(ss []string) (chan string, os.Error) {
       return t.lookUp(ss[1:])
    } else {
       // If not, return nil
-      return nil, os.NewError("No entry for " + fmt.Sprintf("'%v'.", ss))
+      return nil, entryDoesntExist
    }
 
    panic("return path bug")
@@ -61,7 +66,7 @@ func (me *transitionTable) insert(ss []string, cs chan string) os.Error {
          return nil
       } else {
          // Tried to assign cs to a node that was already assigned
-         return os.NewError("Entry already exists for " + fmt.Sprintf("'%v'.", ss))
+         return entryExists
       }
    }
 
@@ -72,7 +77,7 @@ func (me *transitionTable) insert(ss []string, cs chan string) os.Error {
    me.mutex.RUnlock()
 
    if ok {
-      // If there was something in the table it's safe to recurse.
+      // If there was something in the table then it's safe to recurse.
       return t.insert(ss[1:], cs)
    } else {
       // Lock the table while we modify it
@@ -84,7 +89,7 @@ func (me *transitionTable) insert(ss []string, cs chan string) os.Error {
          mutex:      me.mutex}
       me.mutex.Unlock()
 
-      return t.insert(ss[1:], cs)
+      return me.table[ss[0]].insert(ss[1:], cs)
    }
 
    panic("return path bug")
