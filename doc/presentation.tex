@@ -1,8 +1,8 @@
 \documentclass{beamer}
 
-\usepackage{fancyvrb,tikz}
+\usepackage{fancyvrb,tikz, dsfont}
 
-\usetikzlibrary{automata}
+\usetikzlibrary{automata,arrows}
 
 \usetheme{Dresden}
 
@@ -51,32 +51,78 @@
 
 \section{Who is this Markov, and why does he Hide his Models}
 
-\subsection{Markov Chain}
+\subsection{Markov Processes}
 
 \begin{frame}
    \frametitle{What is a Markov Process}
-\end{frame}
+   \begin{enumerate}
+   \item[] \small{\textbf{Markov Process:} A \textcolor{red}{stochastic} process with
+   the \textcolor{red}{Markov property}.}
+   \pause
+   \item[] \textbf{Stochastic Process:} A random process parametrized by time.
+   \pause
+   \item[] \textbf{Markov Property:} Memoryless!
+   \pause
+   \end{enumerate}
+   \begin{columns}[c]
+   \column{1.5in}
+   \begin{tikzpicture} [scale=0.5,->,>=stealth',shorten >=1pt,%
+   auto,node distance=2cm,semithick,transform shape]
 
-\begin{frame}
-   \frametitle{}
-\end{frame}
+   \node[state,initial]  (q0)               {$q_{start}$};
+   \node[state]          (q1) [below of=q0] {$q_1$};
+   \node[state]          (q2) [below of=q1] {$q_2$};
+   \node[state]          (q3) [below of=q2] {$q_3$};
+   \node[state]          (q4) [below of=q3] {$q_{end}$};
 
-\begin{frame}
-   \frametitle{Stochastic Process}
+   \path[->]    (q0) edge               node {}      (q1)
+                (q1) edge               node {}      (q2)
+                (q2) edge               node {}      (q3)
+                (q3) edge               node {}      (q4);
+   \end{tikzpicture}
+   \column{1.5in}
+   \begin{tikzpicture} [scale=0.5,->,>=stealth',shorten >=1pt,%
+   auto,node distance=2cm,semithick,transform shape]
+
+   \node[state,initial]  (q0)                        {$q_{start}$};
+   \node[state]          (q1) [below left of=q0]     {$q_1$};
+   \node[state]          (q2) [below of=q0]          {$q_2$};
+   \node[state]          (q3) [below right of=q0]    {$q_3$};
+   \node[state]          (q4) [below of=q2]          {$q_{end}$};
+
+   \path[->]    (q0) edge               node {}      (q1)
+                (q1) edge               node {}      (q2)
+                (q0) edge               node {}      (q3)
+                (q2) edge               node {}      (q4);
+   \end{tikzpicture}
+$\mathds{P} = [q_{end}|q_2,q_1,q_{start}]$
+\pause
+$\mathds{P} = [q_{end}|q_2]$
+\end{columns}
 \end{frame}
 
 \subsection{Hidden Markov Models}
 \begin{frame}
-   \frametitle{}
+   \frametitle{What are HMM's}
+   \begin{enumerate}
+   \pause
+   \item[] \small{\textbf{Bayesian Networks:} Directed acyclic graphs that
+   represent dependencies between variables in a probabilistic model.}
+   \pause
+   \item[] \small{\textbf{Hidden Markov Models (HMM's):} Operate under the
+   assumption that the system to be modeled is a Markov Model with hidden
+   states. However, some information about this model is revealed. The goal is
+   to guess the model based on that information.}
+   \end{enumerate}
 \end{frame}
 
+\subsection{How this Applies to our Project}
 \begin{frame}
-   \frametitle{Stochastic Process}
-\end{frame}
-
-\subsection{How we use them}
-\begin{frame}
-   \frametitle{How we use them}
+   \frametitle{Why did we need all this?}
+   \begin{columns}[c]
+      \column{1.5in}
+      \column{1.5in}
+   \end{columns}
 \end{frame}
 
 \section{Development Process}
