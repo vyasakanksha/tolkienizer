@@ -2,7 +2,6 @@ package lexer
 
 import (
     "testing"
-    "fmt"
     "os"
 )
 
@@ -34,8 +33,17 @@ func TestThatThang(t *testing.T) {
         t.Fail()
     }
     num, err = dr.Read(atestslice)
-    if (num != 4 || err != nil || string(atestslice) != "elà²") {
-        fmt.Printf("%s\n", atestslice)
+    if (num != 4 || err != nil) {
         t.Fail()
     }
+    if (atestslice[0] != 'e' || atestslice[1] != 'l' || atestslice[2] != 224 || atestslice[3] != 178) {
+        t.Fail()
+    }
+    num, err = dr.Read(atestslice)
+    if (num != 4 || err != nil) {
+        t.Fail()
+    }
+    if (atestslice[0] != 160 || string(atestslice[1:]) != "it.") {
+        t.Fail()
+    } 
 }
