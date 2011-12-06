@@ -2,8 +2,12 @@ package pfa
 
 import (
    "os"
-   "fmt"
    "sync"
+)
+
+var (
+   entryExists      os.Error = os.NewError("Entry already exists.")
+   entryDoesntExist os.Error = os.NewError("Entry does not exist.")
 )
 
 type transitionTable struct {
@@ -39,7 +43,7 @@ func (me *transitionTable) lookUp(ss []string) (chan string, os.Error) {
       return t.lookUp(ss[1:])
    } else {
       // If not, return nil
-      return nil, os.NewError("No entry for " + fmt.Sprintf("'%v'.", ss))
+      return nil, entryDoesntExist
    }
 
    panic("return path bug")
@@ -61,7 +65,7 @@ func (me *transitionTable) insert(ss []string, cs chan string) os.Error {
          return nil
       } else {
          // Tried to assign cs to a node that was already assigned
-         return os.NewError("Entry already exists for " + fmt.Sprintf("'%v'.", ss))
+         return entryExists
       }
    }
 
@@ -72,16 +76,20 @@ func (me *transitionTable) insert(ss []string, cs chan string) os.Error {
    me.mutex.RUnlock()
 
    if ok {
-      // If there was something in the table it's safe to recurse.
+      // If there was something in the table then it's safe to recurse.
       return t.insert(ss[1:], cs)
    } else {
-      // Lock the table while we modify it
-      me.mutex.Lock()
-      // Create a new map entry on the way to our final node
-      me.table[ss[0]] = &transitionTable{
+      // Create a new map entry on the way to our final node, we actually
+      // construct the map entry outside of the mutex so we can maximize
+      // throughput.
+      t = &transitionTable{
          table:      make(map[string]*transitionTable),
          transition: nil,
          mutex:      me.mutex}
+
+      // Lock the table while we modify the map
+      me.mutex.Lock()
+      me.table[ss[0]] = t
       me.mutex.Unlock()
 
       return t.insert(ss[1:], cs)
