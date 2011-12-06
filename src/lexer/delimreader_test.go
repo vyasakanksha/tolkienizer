@@ -10,7 +10,7 @@ func TestThatThang(t *testing.T) {
     delim[0] = ' '
     delim[1] = ','
     delim[2] = '.'
-    delim[3] = '-'
+    delim[3] = 'þ'
     used := '.'
     f, _ := os.Open("samplefile")
     defer f.Close()
@@ -45,5 +45,5 @@ func TestThatThang(t *testing.T) {
     }
     if (atestslice[0] != 160 || string(atestslice[1:]) != "it.") {
         t.Fail()
-    } 
+    }
 }
