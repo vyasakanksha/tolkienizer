@@ -1,0 +1,7 @@
+\beamer@endinputifotherversion {3.06pt}
+\beamer@sectionintoc {1}{Introduction}{5}{0}{1}
+\beamer@sectionintoc {2}{Who is this Markov, and why does he Hide his Models}{6}{0}{2}
+\beamer@subsectionintoc {2}{1}{Markov Chain}{6}{0}{2}
+\beamer@subsectionintoc {2}{2}{Hidden Markov Models}{10}{0}{2}
+\beamer@subsectionintoc {2}{3}{How we use them}{11}{0}{2}
+\beamer@sectionintoc {3}{Development Process}{12}{0}{3}
