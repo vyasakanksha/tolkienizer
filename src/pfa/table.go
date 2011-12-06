@@ -2,7 +2,6 @@ package pfa
 
 import (
    "os"
-   "fmt"
    "sync"
 )
 
@@ -80,16 +79,20 @@ func (me *transitionTable) insert(ss []string, cs chan string) os.Error {
       // If there was something in the table then it's safe to recurse.
       return t.insert(ss[1:], cs)
    } else {
-      // Lock the table while we modify it
-      me.mutex.Lock()
-      // Create a new map entry on the way to our final node
-      me.table[ss[0]] = &transitionTable{
+      // Create a new map entry on the way to our final node, we actually
+      // construct the map entry outside of the mutex so we can maximize
+      // throughput.
+      t = &transitionTable{
          table:      make(map[string]*transitionTable),
          transition: nil,
          mutex:      me.mutex}
+
+      // Lock the table while we modify the map
+      me.mutex.Lock()
+      me.table[ss[0]] = t
       me.mutex.Unlock()
 
-      return me.table[ss[0]].insert(ss[1:], cs)
+      return t.insert(ss[1:], cs)
    }
 
    panic("return path bug")
