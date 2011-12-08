@@ -228,20 +228,23 @@
 \begin{frame}
    \frametitle{Programming in Go}
    \begin{itemize}
-      \item Go offers lightweight threads | hundreds of thousands of concurrent
-      processes with minimal overhead.
-      \item Efficient communication between lightweight threads, allowing
-      programs to be build like UNIX tools (pipe and filter).
-      \item Nodes of markov model implemented as individual threads
+      \item Builtin \texttt{map} type was useful as well
+      \item States are stored in \texttt{map}s as tuples of strings
+      \item Each state has a list of letters that are likely to follow it, and
+      their respective probabilities
    \end{itemize}
 \end{frame}
 
 \begin{frame}
-   \frametitle{Advantages of this Design}
+   \frametitle{Features of the Design}
    \begin{itemize}
-      \item A single function is easy to implement and maintain.
-      \item Nodes know only about themselves, no need for ``glue'' to hold
-      software components together.
+      \item Full \texttt{UTF-8} support
+      \item Supports any granularity for tokens
+      \begin{itemize}
+         \item Letters
+         \item Words
+         \item Could even use sentences, paragraphs, or numeric values.
+      \end{itemize}
    \end{itemize}
 \end{frame}
 
