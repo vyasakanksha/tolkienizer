@@ -8,9 +8,8 @@
 
 \mode<presentation>
 
-\title[Tolkienizer]{Tolkienizer}
-%\subtitle{}
-%\author[]{}
+\title{Tolkienizer}
+\author{Sean Anderson \and Samuel C. Payson \and Akanksha Vyas}
 
 \begin{document}
 
@@ -25,10 +24,12 @@
 
 \section{Introduction}
 
+\subsection{Introduction to the Problem}
+
 \begin{frame}
    \frametitle{What is Natural Language Processing?}
    \begin{itemize}
-      \item Study of human language using computers
+      \item Study of human language using AI techniques
       \item Often uses statistical machine learning techniques
       \item Subfields include:
       \begin{itemize}
@@ -40,22 +41,24 @@
 \end{frame}
 
 \begin{frame}
-   \frametitle{Generating words with Tolkienizer}
+   \frametitle{What is Tolkienizer?}
    \begin{itemize}
       \item Task: generate ``real sounding'' words for a language
-      \item Similar to morphology - identifying key sounds instead of roots
+      \item Similar to morphology - identifying patterns to learn
+      characteristic features of a language
       \item Example: create new ``Elvish sounding'' words from samples of Tolkien's Elvish
       \item Implementation: Hidden Markov Models
    \end{itemize}
 \end{frame}
 
-\section{Who is this Markov, and why does he Hide his Models}
+\section{Who Is This Markov, and Why Does He Hide His Models?}
 
-\subsection{Markov Processes}
+\subsection{Markov Processes and Hidden Markov Models}
 
 \begin{frame}
-   \frametitle{What is a Markov Process}
+   \frametitle{What is a Markov Process?}
    \begin{enumerate}
+   \pause
    \item[] \small{\textbf{Markov Process:} A \textcolor{red}{stochastic} process with
    the \textcolor{red}{Markov property}.}
    \pause
@@ -101,18 +104,17 @@ $\mathds{P} = [q_{end}|q_2]$
 \end{columns}
 \end{frame}
 
-\subsection{Hidden Markov Models}
 \begin{frame}
-   \frametitle{What are HMM's}
+   \frametitle{What are Hidden Markov Models's?}
    \begin{enumerate}
    \pause
    \item[] \small{\textbf{Bayesian Networks:} Directed acyclic graphs that
    represent dependencies between variables in a probabilistic model.}
    \pause
-   \item[] \small{\textbf{Hidden Markov Models (HMM's):} Operate under the
-   assumption that the system to be modeled is a Markov Model with hidden
-   states. However, some information about this model is revealed. The goal is
-   to guess the model based on that information.}
+   \item[] \small{\textbf{Hidden Markov Models (HMM's):} Bayesion network that
+   operates under the assumption that the system to be modeled is a Markov
+   Process with hidden states. However, some information about this model is
+   revealed. The goal is to guess the model based on that information.}
    \end{enumerate}
 \end{frame}
 
@@ -121,7 +123,59 @@ $\mathds{P} = [q_{end}|q_2]$
    \frametitle{Why did we need all this?}
    \begin{columns}[c]
       \column{1.5in}
+      \begin{center}
+         \begin{tikzpicture}
+            \path[use as bounding box] (0,0) rectangle (2.5,2);
+            \path[draw=black]    <1-> (0,0) rectangle node[text centered,text width=1.5cm] {Hidden Model}(1.5,2);
+            \path[draw=black,->] <2-5> (1.5,1.7) -- node[above,blue!50]   {\texttt{d}} (2.5,1.7);
+            \path[draw=black,->] <3-5> (1.5,1.2) -- node[above,orange!50] {\texttt{o}} (2.5,1.2);
+            \path[draw=black,->] <4-5> (1.5,0.7) -- node[above,purple!50] {\texttt{o}} (2.5,0.7);
+            \path[draw=black,->] <5-5> (1.5,0.2) -- node[above,red!50]    {\texttt{m}} (2.5,0.2);
+
+            \path[draw=black,->] <7->  (1.5,1.7) -- node[above,blue!50]   {\texttt{d}} (2.5,1.7);
+            \path[draw=black,->] <8->  (1.5,1.2) -- node[above,orange!50] {\texttt{o}} (2.5,1.2);
+            \path[draw=black,->] <9->  (1.5,0.7) -- node[above,black!60]   {\texttt{v}} (2.5,0.7);
+            \path[draw=black,->] <10-> (1.5,0.2) -- node[above,purple!90]    {\texttt{e}} (2.5,0.2);
+         \end{tikzpicture}
+      \end{center}
       \column{1.5in}
+      \begin{center}
+         \begin{tikzpicture}[bend angle=30,node distance=1.5cm]
+            \path[use as bounding box] (0,0) rectangle (3,-3);
+            \path[draw=black] <2> (0,0) node[circle,blue!50,draw=red!70]   (d)  {\texttt{d}};
+            \path[draw=black] <3-6> (0,0) node[circle,blue!50,draw=black]   (d)  {\texttt{d}};
+            \path[draw=black] <3> node[circle,orange!50,draw=red!70,below right of=d] (o1) {\texttt{o}};
+            \path[draw=black] <4-7> node[circle,orange!50,draw=black,below right of=d] (o1) {\texttt{o}};
+            \path[draw=black] <3> (d) edge[->,bend left,red!70] (o1);
+            \path[draw=black] <4-7> (d) edge[->,bend left] (o1);
+            \path[draw=black] <4> node[circle,purple!50,draw=red!70,below left of=o1] (o2) {\texttt{o}};
+            \path[draw=black] <5-> node[circle,purple!50,draw=black,below left of=o1] (o2) {\texttt{o}};
+            \path[draw=black] <4> (o1) edge[->,bend right,red!70] (o2);
+            \path[draw=black] <5-> (o1) edge[->,bend right] (o2);
+            \path[draw=black] <5-> node[circle,red!50,draw=red!70,below left of=o2] (m) {\texttt{m}};
+            \path[draw=black] <5-> (o2) edge[->,bend left,red!70] (m);
+            \path[draw=black] <6-> node[circle,red!50,draw=black,below left of=o2] (m) {\texttt{m}};
+            \path[draw=black] <6-> (o2) edge[->,bend left] (m);
+
+            \path[draw=black] <7> (0,0) node[circle,blue!50,draw=red!70]   (d)  {\texttt{d}};
+            \path[draw=black] <8-> (0,0) node[circle,blue!50,draw=black]   (d)  {\texttt{d}};
+
+            \path[draw=black] <8> node[circle,orange!50,draw=red!70,below right of=d] (o1) {\texttt{o}};
+            \path[draw=black] <9-> node[circle,orange!50,draw=black,below right of=d] (o1) {\texttt{o}};
+            \path[draw=black] <8> (d) edge[->,bend left,red!70] (o1);
+            \path[draw=black] <9-> (d) edge[->,bend left] (o1);
+
+            \path[draw=black] <9> node[circle,black!60,draw=red!70,below right of=o1] (v) {\texttt{v}};
+            \path[draw=black] <9> (o1) edge[->,bend left,red!70] (v);
+            \path[draw=black] <10-> node[circle,black!60,draw=black,below right of=o1] (v) {\texttt{v}};
+            \path[draw=black] <10-> (o1) edge[->,bend left] (v);
+
+            \path[draw=black] <10> node[circle,purple!90,draw=red!70,below right of=v] (e) {\texttt{e}};
+            \path[draw=black] <10> (v) edge[->,bend right,red!70] (e);
+            \path[draw=black] <11-> node[circle,purple!90,draw=black,below right of=v] (e) {\texttt{e}};
+            \path[draw=black] <11-> (v) edge[->,bend right] (e);
+         \end{tikzpicture}
+      \end{center}
    \end{columns}
 \end{frame}
 
