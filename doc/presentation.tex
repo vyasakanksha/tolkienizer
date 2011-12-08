@@ -58,17 +58,13 @@
 \begin{frame}
    \frametitle{What is a Markov Process?}
    \begin{enumerate}
-   \pause
-   \item[] \small{\textbf{Markov Process:} A \textcolor{red}{stochastic} process with
+   \item[] <2-> \small{\textbf{Markov Process:} A \textcolor{red}{stochastic} process with
    the \textcolor{red}{Markov property}.}
-   \pause
-   \item[] \textbf{Stochastic Process:} A random process parametrized by time.
-   \pause
-   \item[] \textbf{Markov Property:} Memoryless!
-   \pause
-   \end{enumerate}
+   \item[] <3-> \textbf{Stochastic Process:} A random process parametrized by time.
+   \item[] <4-> \textbf{Markov Property:} Memoryless!
+   \item[] <3->
    \begin{columns}[c]
-   \column{1.5in}
+   \column{1.5in} 
    \begin{tikzpicture} [scale=0.5,->,>=stealth',shorten >=1pt,%
    auto,node distance=2cm,semithick,transform shape]
 
@@ -83,7 +79,7 @@
                 (q2) edge               node {}      (q3)
                 (q3) edge               node {}      (q4);
    \end{tikzpicture}
-   \column{1.5in}
+   \column{1.5in} 
    \begin{tikzpicture} [scale=0.5,->,>=stealth',shorten >=1pt,%
    auto,node distance=2cm,semithick,transform shape]
 
@@ -98,10 +94,12 @@
                 (q0) edge               node {}      (q3)
                 (q2) edge               node {}      (q4);
    \end{tikzpicture}
-$\mathds{P} = [q_{end}|q_2,q_1,q_{start}]$
-\pause
-$\mathds{P} = [q_{end}|q_2]$
+   \begin{itemize}
+\item[] $\mathds{P} = [q_{end}|q_2,q_1,q_{start}]$
+\item[] <6-> $\mathds{P} = [q_{end}|q_2]$
+   \end{itemize}
 \end{columns}
+\end{enumerate} 
 \end{frame}
 
 \begin{frame}
