@@ -15,6 +15,8 @@ type NReader interface {
 
    // This function reads a new string and adds it to tokenSet
    Advance() bool
+
+   GetN() int
 }
 
 // A base struct off which each reader extends
@@ -88,12 +90,16 @@ func NewNReaderWords(n int, r io.Reader, delim []int) NReader {
 
 // Return: Last n values of the stringSet (excuding the current value)
 func (this *nReaderBase) Prefix() []string {
-   return this.stringSet[len(this.stringSet)-this.n:]
+   return this.stringSet[len(this.stringSet)-(this.n+1) : len(this.stringSet)-1]
 }
 
 // This function returns the current string from stringSet
 func (this *nReaderBase) Next() string {
    return this.stringSet[len(this.stringSet)-1]
+}
+
+func (this *nReaderBase) GetN() int {
+   return this.n
 }
 
 // Implementation of the advance function that reads letters till it encounters
@@ -104,14 +110,20 @@ func (this *nReaderLetterDelim) Advance() bool {
 
    // Since the filter converted all delims to ".", we only have to account for
    // it.
-   if err != nil || temp == '.' {
+   if err != nil {
       return false
+   } else if this.Next() == "" {
+      for ; temp == '.' && err == nil; temp, _, err = this.r.ReadRune() {
+      }
+      this.stringSet = make([]string, this.n+1)
+      this.stringSet[len(this.stringSet)-1] = string(temp)
+   } else if temp == '.' {
+      this.stringSet = append(this.stringSet, "")
    } else {
       this.stringSet = append(this.stringSet, string(temp))
-      return true
    }
 
-   panic("We should never get here")
+   return true
 }
 
 // Implementation of the advance function that keeps reading letters till 

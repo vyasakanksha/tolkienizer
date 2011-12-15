@@ -6,9 +6,9 @@ import (
 )
 
 func TestThatThang(t *testing.T) {
-   delim := []int{' ',',','.','þ'}
+   delim := []int{' ', ',', '.', 'þ'}
 
-   r  := strings.NewReader( "Minim loಠvelಠit," )
+   r := strings.NewReader("Minim loಠvelಠit,")
 
    dr := NewDelimReader(r, delim, '.')
 

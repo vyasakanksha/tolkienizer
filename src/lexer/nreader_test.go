@@ -12,7 +12,7 @@ func TestNReaders(t *testing.T) {
 
    if temp.Advance() != false {
 
-      test := []string{"", "", "h"}
+      test := []string{"", "", ""}
 
       for i, rune := range temp.Prefix() {
          if rune != test[i] {
