@@ -57,7 +57,11 @@ type nReaderWords struct {
 
 // Initializes NReaderLetter with n and reader r 
 func NewNReaderLetter(n int, r io.Reader) NReader {
-   return &nReaderLetter{nReaderBase: nReaderBase{r: bufio.NewReader(r), n: n}}
+   return &nReaderLetter{
+      nReaderBase: nReaderBase{
+         stringSet: make([]string, n),
+         r:         bufio.NewReader(r),
+         n:         n}}
 }
 
 // Initializes NReaderLetterDelim with n, reader r and a slice of delims that
@@ -65,8 +69,9 @@ func NewNReaderLetter(n int, r io.Reader) NReader {
 func NewNReaderLetterDelim(n int, r io.Reader, delim []int) NReader {
    return &nReaderLetterDelim{
       nReaderBase: nReaderBase{
-         r: bufio.NewReader(NewDelimReader(r, delim, '.')),
-         n: n},
+         stringSet: make([]string, n),
+         r:         bufio.NewReader(NewDelimReader(r, delim, '.')),
+         n:         n},
       delim: delim}
 }
 
@@ -75,42 +80,26 @@ func NewNReaderLetterDelim(n int, r io.Reader, delim []int) NReader {
 func NewNReaderWords(n int, r io.Reader, delim []int) NReader {
    return &nReaderWords{
       nReaderBase: nReaderBase{
-         r: bufio.NewReader(NewDelimReader(r, delim, '.')),
-         n: n},
+         stringSet: make([]string, n),
+         r:         bufio.NewReader(NewDelimReader(r, delim, '.')),
+         n:         n},
       delim: delim}
 }
 
 // Return: Last n values of the stringSet (excuding the current value)
-func (this nReaderBase) Prefix() []string {
-   j := 0
-   length := len(this.stringSet)
-   prefixSet := make([]string, this.n)
-
-   // If n is larger than the stringSet, initialize prefixSet[:n-length] to
-   // the empty string
-   if length < this.n {
-      for j := 0; j < (this.n - length); j++ {
-         prefixSet[j] = ""
-      }
-   }
-
-   // Copy the last n (excluding length) tokens to prefix
-   for i := (length - this.n); i < length; i++ {
-      prefixSet[j] = this.stringSet[i]
-      j++
-   }
-   return prefixSet
+func (this *nReaderBase) Prefix() []string {
+   return this.stringSet[len(this.stringSet)-this.n:]
 }
 
 // This function returns the current string from stringSet
-func (this nReaderBase) Next() string {
+func (this *nReaderBase) Next() string {
    return this.stringSet[len(this.stringSet)-1]
 }
 
 // Implementation of the advance function that reads letters till it encounters
 // a specified delimited. The function reads the next character from the stream
 // and adds it to stringSet.
-func (this nReaderLetterDelim) Advance() bool {
+func (this *nReaderLetterDelim) Advance() bool {
    temp, _, err := this.r.ReadRune()
 
    // Since the filter converted all delims to ".", we only have to account for
@@ -118,7 +107,7 @@ func (this nReaderLetterDelim) Advance() bool {
    if err != nil || temp == '.' {
       return false
    } else {
-      this.stringSet[len(this.stringSet)] = string(temp)
+      this.stringSet = append(this.stringSet, string(temp))
       return true
    }
 
@@ -128,12 +117,12 @@ func (this nReaderLetterDelim) Advance() bool {
 // Implementation of the advance function that keeps reading letters till 
 // it encounters the end of the stream. The function reads the next 
 // character from the stream and adds it to stringSet.
-func (this nReaderLetter) Advance() bool {
+func (this *nReaderLetter) Advance() bool {
    temp, _, err := this.r.ReadRune()
    if err != nil {
       return false
    } else {
-      this.stringSet[len(this.stringSet)] = string(temp)
+      this.stringSet = append(this.stringSet, string(temp))
       return true
    }
 
@@ -143,14 +132,14 @@ func (this nReaderLetter) Advance() bool {
 // Implementation of the advance function that reads stings (words) till 
 // it encounters a specified delimiter. The function reads the next 
 // string from the stream and adds it to stringSet.
-func (this nReaderWords) Advance() bool {
+func (this *nReaderWords) Advance() bool {
    // Since the filter converted all delims to ".", we only have to account for
    // it.
    temp, err := this.r.ReadString('.')
    if err != nil {
       return false
    } else {
-      this.stringSet[len(this.stringSet)] = temp
+      this.stringSet = append(this.stringSet, temp)
       return true
    }
 

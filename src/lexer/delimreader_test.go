@@ -2,19 +2,15 @@ package lexer
 
 import (
    "testing"
-   "os"
+   "strings"
 )
 
 func TestThatThang(t *testing.T) {
-   delim := make([]int, 4)
-   delim[0] = ' '
-   delim[1] = ','
-   delim[2] = '.'
-   delim[3] = 'þ'
-   used := '.'
-   f, _ := os.Open("samplefile")
-   defer f.Close()
-   dr := NewDelimReader(f, delim, used)
+   delim := []int{' ',',','.','þ'}
+
+   r  := strings.NewReader( "Minim loಠvelಠit," )
+
+   dr := NewDelimReader(r, delim, '.')
 
    atestslice := make([]byte, 4)
    num, err := dr.Read(atestslice)
