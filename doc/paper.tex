@@ -11,7 +11,13 @@ Tolkienizer is a program using natural language processing to create artificial 
 
 \subsection{Natural Language Processing}
 
+Natural Language Processing (NLP) is the broad field of applying computational analysis to language.  It spans a huge variety of sub-fields, from analyzing the structure of individual words to converting text into logic.  For instance, morphology is the problem of breaking a word down into its components, and it operates on a completely different syntactic level from sentence parsing, which breaks down a sentence into its grammatical structures.
+
 \subsection{Tolkienizer Goals}
+
+Our task is somewhat closer to the morphology level of NLP, in that it focuses on words and parts of words.  The Tolkienizer project is an attempt to create fake words that look and sound like they belong to a particular language.  It is named after J.R.R. Tolkien, whose artificial Elvish languages did just that - each form of Elvish was modeled after a different Northern European language.
+
+The Tolkienizer trains on a sample of text from a given language, and learns the patterns of how words are formed in that language.  Then it generates words that it thinks are in the language, but imprecisely, so that it creates words that are not actually in the language, but seem to be.
 
 \section{Implementation}
 
@@ -19,7 +25,38 @@ Tolkienizer is a program using natural language processing to create artificial 
 
 \section{Results}
 
+We ran Tolkienizer on three language sets: a collection of writings in Tolkien's Sindarin Elvish language, the GNU English dictionary, and the complete works of Shakespeare.  In the case of Shakespeare, the training set was so large that the HMM became over-trained, and never produced words that were not in the original text.  On the dictionary and Sindarin, however, we had better results.
+
+Sindarin created words that could very easily be mistaken for Elvish, at least by a non-speaker.  Words like ``imlain,'' ``drastannan,'' and ``maethant'' all have a very Tolkien-esque feel, but are not in the original file.  However, with an artificial language like Sindarin, it is probably much easier to make fake words than it is in a language that we are familiar with.
+
 \subsection{Example}
+
+Here is an example using the GNU English dictionary as input:
+
+\begin{verbatim}
+$ cat /usr/share/dict/words | ./tolkienizer 
+Tolkienizer v0.0
+solitholacupriacetamering
+spiritter
+jockable
+two
+Coldheromebuillaboviparoo
+pyrilelemembertegrous
+bethness
+nond
+Stramadesis
+Crest
+Acant
+burtuidness
+papa
+chippins
+subatter
+sub
+brodiacarquieting
+considicier
+leemeiku
+flags
+\end{verbatim}
 
 \subsection{Analysis}
 
